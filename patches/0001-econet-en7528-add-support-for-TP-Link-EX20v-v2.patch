@@ -30,10 +30,10 @@ Claude-Session: https://claude.ai/code/session_01YbeF2izcaoFj6qx1YBoB3j
  .../econet/base-files/etc/board.d/01_leds     |  11 +
  .../econet/base-files/etc/board.d/02_network  |   3 +
  .../econet/base-files/lib/upgrade/platform.sh |   7 +-
- .../econet/dts/en7528_tplink_ex20v-v2.dts     | 411 ++++++++++++++++++
+ .../econet/dts/en7528_tplink_ex20v-v2.dts     | 416 ++++++++++++++++++
  target/linux/econet/image/en7528.mk           |  41 ++
  target/linux/econet/image/tplink-ex20v-hdr.py |  54 +++
- 6 files changed, 526 insertions(+), 1 deletion(-)
+ 6 files changed, 531 insertions(+), 1 deletion(-)
  create mode 100644 target/linux/econet/dts/en7528_tplink_ex20v-v2.dts
  create mode 100755 target/linux/econet/image/tplink-ex20v-hdr.py
 
@@ -102,7 +102,7 @@ new file mode 100644
 index 0000000000..e284f4978b
 --- /dev/null
 +++ b/target/linux/econet/dts/en7528_tplink_ex20v-v2.dts
-@@ -0,0 +1,411 @@
+@@ -0,0 +1,416 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
 + * TP-Link EX20v v2 (Türk Telekom AX1800 VDSL/fiber gateway)
@@ -244,6 +244,11 @@ index 0000000000..e284f4978b
 +		reg = <0x0000 0 0 0 0>;
 +		nvmem-cells = <&macaddr_romfile_2000 1>, <&eeprom_radio_0>;
 +		nvmem-cell-names = "mac-address", "eeprom";
++
++		led {
++			led-active-low;
++			mediatek,led-radio-only;
++		};
 +	};
 +};
 +

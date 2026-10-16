@@ -1,0 +1,71 @@
+From 33a76adfc4e5d1b83b90fe50506e8be068835e7c Mon Sep 17 00:00:00 2001
+From: Yucel Mustafa <yucellmustafa@gmail.com>
+Date: Fri, 16 Oct 2026 20:20:00 +0300
+Subject: [PATCH 9/9] wifi: mt76: support radio-only LED trigger
+
+Some boards connect their Wi-Fi indicators directly to the MT7915 LED
+outputs but expect a steady light while the radio is enabled. Allow these
+boards to opt out of the default throughput blinking through a device-tree
+property while preserving the existing behavior for every other device.
+
+Signed-off-by: Yucel Mustafa <yucellmustafa@gmail.com>
+---
+ .../patches/110-mt76-radio-only-led-trigger.patch | 47 ++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 package/kernel/mt76/patches/110-mt76-radio-only-led-trigger.patch
+
+diff --git a/package/kernel/mt76/patches/110-mt76-radio-only-led-trigger.patch b/package/kernel/mt76/patches/110-mt76-radio-only-led-trigger.patch
+new file mode 100644
+index 0000000000..61ca692a9f
+--- /dev/null
++++ b/package/kernel/mt76/patches/110-mt76-radio-only-led-trigger.patch
+@@ -0,0 +1,47 @@
++From: Yucel Mustafa <yucellmustafa@gmail.com>
++Subject: [PATCH] wifi: mt76: support radio-only LED trigger
++
++The default mt76 throughput trigger blinks during traffic. Some boards use
++the MT76 LED outputs as radio state indicators and require a steady light
++while the radio is enabled. Add an opt-in DT property for those boards.
++
++Signed-off-by: Yucel Mustafa <yucellmustafa@gmail.com>
++---
++diff --git a/mac80211.c b/mac80211.c
++index d838cdd9..16f86334 100644
++--- a/mac80211.c
+++++ b/mac80211.c
++@@ -199,6 +199,7 @@ static int mt76_led_init(struct mt76_phy *phy)
++ 	struct mt76_dev *dev = phy->dev;
++ 	struct ieee80211_hw *hw = phy->hw;
++ 	struct device_node *np = dev->dev->of_node;
+++	bool radio_only = false;
++ 
++ 	if (!phy->leds.cdev.brightness_set && !phy->leds.cdev.blink_set)
++ 		return 0;
++@@ -220,6 +221,9 @@ static int mt76_led_init(struct mt76_phy *phy)
++ 			phy->leds.al =
++ 				of_property_read_bool(np, "led-active-low");
++ 		}
+++
+++		radio_only = of_property_read_bool(np,
+++						   "mediatek,led-radio-only");
++ 
++ 		of_node_put(np);
++ 	}
++@@ -228,10 +232,11 @@ static int mt76_led_init(struct mt76_phy *phy)
++ 
++ 	phy->leds.cdev.name = phy->leds.name;
++ 	phy->leds.cdev.default_trigger =
++-		ieee80211_create_tpt_led_trigger(hw,
++-					IEEE80211_TPT_LEDTRIG_FL_RADIO,
++-					mt76_tpt_blink,
++-					ARRAY_SIZE(mt76_tpt_blink));
+++		radio_only ? ieee80211_get_radio_led_name(hw) :
+++			ieee80211_create_tpt_led_trigger(hw,
+++					IEEE80211_TPT_LEDTRIG_FL_RADIO,
+++					mt76_tpt_blink,
+++					ARRAY_SIZE(mt76_tpt_blink));
++ 
++ 	dev_info(dev->dev,
++ 		"registering led '%s'\n", phy->leds.name);
+-- 
+2.51.0

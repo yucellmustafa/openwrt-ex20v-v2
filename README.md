@@ -146,6 +146,7 @@ echo 0 > /sys/module/econet_eth/parameters/wifi_offload
 | `0006` | Wi-Fi hızlı yolu için `br-lan` flowtable desteği |
 | `0007` | İnternet -> Wi-Fi PPE hızlı yolu |
 | `0008` | Wi-Fi PPE hızlı yolunu varsayılan etkinleştirir |
+| `0009` | Wi-Fi LED polaritesini ve sabit radyo durumu tetikleyicisini düzeltir |
 
 ## Lisans ve Katkılar
 
