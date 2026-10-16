@@ -37,7 +37,10 @@ jobs:
           git -c user.name=ci -c user.email=ci@localhost am ../patches/*.patch
 
       - name: Feeds
-        run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
+        run: |
+          cd openwrt
+          ./scripts/feeds update packages luci
+          ./scripts/feeds install luci luci-app-sqm luci-app-irqbalance
 
       - name: Configure
         run: |
@@ -66,7 +69,6 @@ jobs:
           cp $B/*tplink_ex20v-v2-squashfs-kernel.bin       out/ex20v-kernel.bin
           cp $B/*tplink_ex20v-v2-squashfs-ubi.bin          out/ex20v-ubi.bin
           cp $B/*tplink_ex20v-v2-squashfs-sysupgrade.bin   out/ex20v-v2-sysupgrade.bin
-          cp scripts/* out/
           for f in out/ex20v-rescue.bin out/ex20v-kernel.bin; do
             s=$(stat -c%s $f); echo "$f $s"; [ $s -le 6291456 ] || { echo "TOO BIG: $f"; exit 1; }
           done

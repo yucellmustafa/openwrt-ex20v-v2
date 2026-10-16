@@ -31,9 +31,9 @@ Claude-Session: https://claude.ai/code/session_01YbeF2izcaoFj6qx1YBoB3j
  .../econet/base-files/etc/board.d/02_network  |   3 +
  .../econet/base-files/lib/upgrade/platform.sh |   7 +-
  .../econet/dts/en7528_tplink_ex20v-v2.dts     | 411 ++++++++++++++++++
- target/linux/econet/image/en7528.mk           |  39 ++
+ target/linux/econet/image/en7528.mk           |  41 ++
  target/linux/econet/image/tplink-ex20v-hdr.py |  54 +++
- 6 files changed, 524 insertions(+), 1 deletion(-)
+ 6 files changed, 526 insertions(+), 1 deletion(-)
  create mode 100644 target/linux/econet/dts/en7528_tplink_ex20v-v2.dts
  create mode 100755 target/linux/econet/image/tplink-ex20v-hdr.py
 
@@ -518,7 +518,7 @@ diff --git a/target/linux/econet/image/en7528.mk b/target/linux/econet/image/en7
 index 7affa04316..74ae40024c 100644
 --- a/target/linux/econet/image/en7528.mk
 +++ b/target/linux/econet/image/en7528.mk
-@@ -57,3 +57,42 @@ define Device/jiofiber_jcow407
+@@ -57,3 +57,44 @@ define Device/jiofiber_jcow407
    DEVICE_DTS := en7528_jiofiber_jcow407
  endef
  TARGET_DEVICES += jiofiber_jcow407
@@ -544,7 +544,9 @@ index 7affa04316..74ae40024c 100644
 +  IMAGE/kernel.bin := append-kernel
 +  IMAGE/ubi.bin := append-ubi
 +  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7915-firmware luci
++  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7915-firmware luci \
++	luci-app-sqm luci-app-irqbalance \
++	-wpad-basic-mbedtls wpad-mbedtls
 +endef
 +TARGET_DEVICES += tplink_ex20v-v2
 +
@@ -623,4 +625,3 @@ index 0000000000..cf22dd40cf
 +    main()
 -- 
 2.43.0
-
